@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalender Agenda Interaktif</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="controls">
+        <!-- Navigasi & Pilih Bulan/Tahun -->
+        <div class="month-picker">
+            <button id="btn-prev">&lt;</button>
+            <select id="select-month"></select>
+            <input type="number" id="select-year" min="1900" max="2100">
+            <button id="btn-next">&gt;</button>
+        </div>
+
+        <!-- Filter Kategori -->
+        <div class="filter-box">
+            <label for="filter-category"><strong>Filter:</strong></label>
+            <select id="filter-category">
+                <option value="semua">Semua Agenda</option>
+                <option value="kerja">Kerja</option>
+                <option value="pribadi">Pribadi</option>
+                <option value="penting">Penting</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Header Hari -->
+    <div class="calendar-header">
+        <div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div>
+    </div>
+
+    <!-- Grid Kalender -->
+    <div class="calendar-grid" id="calendar-grid"></div>
+</div>
+
+<!-- Modal Edit Agenda -->
+<div class="modal" id="agenda-modal">
+    <div class="modal-content">
+        <h3 id="modal-title">Edit Agenda</h3>
+        <input type="hidden" id="selected-date-key">
+        
+        <label for="agenda-text">Judul Agenda:</label>
+        <input type="text" id="agenda-text" placeholder="Masukkan kegiatan...">
+
+        <label for="agenda-category">Kategori:</label>
+        <select id="agenda-category">
+            <option value="kerja">Kerja</option>
+            <option value="pribadi">Pribadi</option>
+            <option value="penting">Penting</option>
+        </select>
+
+        <div class="modal-actions">
+            <button id="btn-save">Simpan</button>
+            <button id="btn-delete" class="btn-danger">Hapus</button>
+            <button id="btn-close" class="btn-secondary">Batal</button>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
