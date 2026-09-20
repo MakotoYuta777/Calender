@@ -88,6 +88,8 @@ button:hover {
     transition: background 0.2s;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
+    max-height: 120px;
 }
 
 .day-cell:hover {
@@ -121,6 +123,7 @@ button:hover {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    flex-shrink: 0;
 }
 
 .cat-kerja { background-color: #28a745; }
@@ -141,7 +144,9 @@ button:hover {
     background: white;
     padding: 20px;
     border-radius: 8px;
-    width: 320px;
+    width: 360px;
+    max-height: 90vh;
+    overflow-y: auto;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
@@ -167,10 +172,65 @@ button:hover {
 .modal-actions {
     margin-top: 15px;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
 }
 
-.btn-danger { background-color: #dc3545; }
-.btn-danger:hover { background-color: #bd2130; }
+.btn-primary { background-color: #007bff; }
+.btn-primary:hover { background-color: #0056b3; }
 .btn-secondary { background-color: #6c757d; }
 .btn-secondary:hover { background-color: #545b62; }
+
+/* Agenda List inside Modal */
+.agenda-list-container {
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.agenda-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 8px;
+}
+
+.agenda-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.badge-cat {
+    font-size: 12px;
+    color: white;
+    padding: 3px 6px;
+    border-radius: 3px;
+    flex: 1;
+    margin-right: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.btn-delete-item {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 2px 6px;
+    font-size: 11px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.btn-delete-item:hover {
+    background-color: #bd2130;
+}
+
+.empty-list {
+    font-size: 12px;
+    color: #888;
+    font-style: italic;
+}

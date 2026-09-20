@@ -4,7 +4,19 @@ const months = [
 ];
 
 let currentDate = new Date();
-let events = JSON.parse(localStorage.getItem('calendar_events')) || {};
+
+// Load data dan konversi format lama (jika ada) ke format array multi-agenda
+let rawEvents = JSON.parse(localStorage.getItem('calendar_events')) || {};
+let events = {};
+
+// Migrasi data jika struktur lama masih berupa Objek bukan Array
+Object.keys(rawEvents).forEach(key => {
+    if (Array.isArray(rawEvents[key])) {
+        events[key] = rawEvents[key];
+    } else if (typeof rawEvents[key] === 'object' && rawEvents[key] !== null) {
+        events[key] = [rawEvents[key]]; // Ubah objek tunggal ke array
+    }
+});
 
 // Element references
 const selectMonth = document.getElementById('select-month');
@@ -17,6 +29,7 @@ const modalTitle = document.getElementById('modal-title');
 const selectedDateKey = document.getElementById('selected-date-key');
 const agendaText = document.getElementById('agenda-text');
 const agendaCategory = document.getElementById('agenda-category');
+const agendaList = document.getElementById('agenda-list');
 
 // Inisialisasi Pilihan Bulan dan Tahun
 function initSelectors() {
@@ -72,14 +85,16 @@ function renderCalendar() {
         dayNum.textContent = day;
         cell.appendChild(dayNum);
 
-        if (events[dateKey]) {
-            const ev = events[dateKey];
-            if (activeFilter === 'semua' || ev.category === activeFilter) {
-                const badge = document.createElement('div');
-                badge.classList.add('agenda-item', `cat-${ev.category}`);
-                badge.textContent = ev.text;
-                cell.appendChild(badge);
-            }
+        // Render multi-agenda
+        if (events[dateKey] && events[dateKey].length > 0) {
+            events[dateKey].forEach(ev => {
+                if (activeFilter === 'semua' || ev.category === activeFilter) {
+                    const badge = document.createElement('div');
+                    badge.classList.add('agenda-item', `cat-${ev.category}`);
+                    badge.textContent = ev.text;
+                    cell.appendChild(badge);
+                }
+            });
         }
 
         cell.onclick = () => openModal(dateKey);
@@ -112,24 +127,48 @@ function openModal(dateKey) {
     selectedDateKey.value = dateKey;
     const formattedDate = dateKey.split('-').reverse().join('-');
     
-    if (events[dateKey]) {
-        modalTitle.textContent = `Edit Agenda (${formattedDate})`;
-        agendaText.value = events[dateKey].text;
-        agendaCategory.value = events[dateKey].category;
-    } else {
-        modalTitle.textContent = `Tambah Agenda (${formattedDate})`;
-        agendaText.value = '';
-        agendaCategory.value = 'kerja';
+    modalTitle.textContent = `Agenda Tanggal: ${formattedDate}`;
+    agendaText.value = '';
+    agendaCategory.value = 'kerja';
+
+    renderModalAgendaList(dateKey);
+    agendaModal.style.display = 'flex';
+}
+
+function renderModalAgendaList(dateKey) {
+    agendaList.innerHTML = '';
+    
+    const dayEvents = events[dateKey] || [];
+
+    if (dayEvents.length === 0) {
+        agendaList.innerHTML = '<li class="empty-list">Belum ada agenda</li>';
+        return;
     }
 
-    agendaModal.style.display = 'flex';
+    dayEvents.forEach((ev, index) => {
+        const li = document.createElement('li');
+        li.classList.add('agenda-list-item');
+
+        const infoSpan = document.createElement('span');
+        infoSpan.classList.add(`badge-cat`, `cat-${ev.category}`);
+        infoSpan.textContent = ev.text;
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = '✕';
+        deleteBtn.classList.add('btn-delete-item');
+        deleteBtn.onclick = () => deleteAgendaItem(dateKey, index);
+
+        li.appendChild(infoSpan);
+        li.appendChild(deleteBtn);
+        agendaList.appendChild(li);
+    });
 }
 
 function closeModal() {
     agendaModal.style.display = 'none';
 }
 
-function saveAgenda() {
+function addAgenda() {
     const dateKey = selectedDateKey.value;
     const text = agendaText.value.trim();
     const category = agendaCategory.value;
@@ -139,21 +178,31 @@ function saveAgenda() {
         return;
     }
 
-    events[dateKey] = { text, category };
+    if (!events[dateKey]) {
+        events[dateKey] = [];
+    }
+
+    events[dateKey].push({ text, category });
     localStorage.setItem('calendar_events', JSON.stringify(events));
-    
-    closeModal();
+
+    agendaText.value = ''; // Reset input text
+    renderModalAgendaList(dateKey);
     renderCalendar();
 }
 
-function deleteAgenda() {
-    const dateKey = selectedDateKey.value;
+function deleteAgendaItem(dateKey, index) {
     if (events[dateKey]) {
-        delete events[dateKey];
+        events[dateKey].splice(index, 1);
+
+        // Jika tidak ada agenda tersisa di tanggal tersebut, hapus key-nya
+        if (events[dateKey].length === 0) {
+            delete events[dateKey];
+        }
+
         localStorage.setItem('calendar_events', JSON.stringify(events));
+        renderModalAgendaList(dateKey);
+        renderCalendar();
     }
-    closeModal();
-    renderCalendar();
 }
 
 // Event Listeners
@@ -163,8 +212,7 @@ selectMonth.addEventListener('change', changeMonthYear);
 selectYear.addEventListener('change', changeMonthYear);
 filterCategory.addEventListener('change', renderCalendar);
 
-document.getElementById('btn-save').addEventListener('click', saveAgenda);
-document.getElementById('btn-delete').addEventListener('click', deleteAgenda);
+document.getElementById('btn-save').addEventListener('click', addAgenda);
 document.getElementById('btn-close').addEventListener('click', closeModal);
 
 // Init

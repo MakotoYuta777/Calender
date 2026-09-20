@@ -39,26 +39,37 @@
     <div class="calendar-grid" id="calendar-grid"></div>
 </div>
 
-<!-- Modal Edit Agenda -->
+<!-- Modal Kelola Agenda Multi-Item -->
 <div class="modal" id="agenda-modal">
     <div class="modal-content">
-        <h3 id="modal-title">Edit Agenda</h3>
+        <h3 id="modal-title">Agenda Tanggal</h3>
         <input type="hidden" id="selected-date-key">
         
-        <label for="agenda-text">Judul Agenda:</label>
-        <input type="text" id="agenda-text" placeholder="Masukkan kegiatan...">
+        <!-- Form Tambah Agenda Baru -->
+        <div class="add-agenda-form">
+            <h4>Tambah Agenda Baru</h4>
+            <label for="agenda-text">Judul Agenda:</label>
+            <input type="text" id="agenda-text" placeholder="Masukkan kegiatan...">
 
-        <label for="agenda-category">Kategori:</label>
-        <select id="agenda-category">
-            <option value="kerja">Kerja</option>
-            <option value="pribadi">Pribadi</option>
-            <option value="penting">Penting</option>
-        </select>
+            <label for="agenda-category">Kategori:</label>
+            <select id="agenda-category">
+                <option value="kerja">Kerja</option>
+                <option value="pribadi">Pribadi</option>
+                <option value="penting">Penting</option>
+            </select>
+            <button id="btn-save" class="btn-primary" style="margin-top: 10px; width: 100%;">Tambah Agenda</button>
+        </div>
+
+        <hr style="margin: 15px 0;">
+
+        <!-- Daftar Agenda yang Sudah Ada -->
+        <div class="agenda-list-container">
+            <h4>Daftar Agenda:</h4>
+            <ul id="agenda-list" class="agenda-list"></ul>
+        </div>
 
         <div class="modal-actions">
-            <button id="btn-save">Simpan</button>
-            <button id="btn-delete" class="btn-danger">Hapus</button>
-            <button id="btn-close" class="btn-secondary">Batal</button>
+            <button id="btn-close" class="btn-secondary">Tutup</button>
         </div>
     </div>
 </div>
